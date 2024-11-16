@@ -31,15 +31,29 @@ router.get('/search', async (req, res) => {
 // Add a new book
 router.post('/', async (req, res) => {
   try {
-    const { title, author, price, condition, seller_id } = req.body;
-    await db.query(
-    'INSERT INTO books (title, author, price, book_condition, seller_id) VALUES (?, ?, ?, ?, ?)',
-    [title, author, price, condition, seller_id]
+    const { title, author, price, book_condition, seller_id } = req.body;
+    
+    // Log the received data for debugging
+    console.log('Received book data:', {
+      title,
+      author,
+      price,
+      book_condition,
+      seller_id
+    });
+
+    const [result] = await db.query(
+      'INSERT INTO books (title, author, price, book_condition, seller_id) VALUES (?, ?, ?, ?, ?)',
+      [title, author, price, book_condition, seller_id]
     );
-    res.status(201).json({ msg: 'Book added successfully' });
+
+    res.status(201).json({ 
+      msg: 'Book added successfully',
+      bookId: result.insertId 
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ msg: 'Server error' });
+    console.error('Error adding book:', err);
+    res.status(500).json({ msg: 'Server error', error: err.message });
   }
 });
 

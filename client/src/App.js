@@ -22,7 +22,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        {isAuthenticated && <Navbar />}
+        {isAuthenticated && <Navbar updateAuthStatus={updateAuthStatus} />}
         <Routes>
           <Route path="/signup" element={!isAuthenticated ? <SignUp updateAuthStatus={updateAuthStatus} /> : <Navigate to="/" />} />
           <Route path="/login" element={!isAuthenticated ? <Login updateAuthStatus={updateAuthStatus} /> : <Navigate to="/" />} />

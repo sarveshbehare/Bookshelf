@@ -8,7 +8,7 @@ function SellBook() {
     title: '',
     author: '',
     price: '',
-    book_condition: 'New' // Default value
+    book_condition: 'New'
   });
 
   const handleSubmit = async (e) => {
@@ -17,7 +17,14 @@ function SellBook() {
       const user = JSON.parse(localStorage.getItem('user'));
       const token = localStorage.getItem('token');
 
-      await axios.post(
+      // Log the data being sent for debugging
+      console.log('Sending book data:', {
+        ...formData,
+        seller_id: user.id,
+        price: parseFloat(formData.price)
+      });
+
+      const response = await axios.post(
         'http://localhost:5000/api/books',
         {
           ...formData,
@@ -26,16 +33,18 @@ function SellBook() {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
           }
         }
       );
 
+      console.log('Server response:', response.data);
       alert('Book listed successfully!');
-      navigate('/');
+      navigate('/', { replace: true });
     } catch (err) {
-      console.error(err);
-      alert('Failed to list book');
+      console.error('Error details:', err.response?.data || err.message);
+      alert(`Failed to list book: ${err.response?.data?.msg || err.message}`);
     }
   };
 
@@ -68,8 +77,8 @@ function SellBook() {
             step="0.01"
           />
           <select
-            value={formData.condition}
-            onChange={(e) => setFormData({...formData, condition: e.target.value})}
+            value={formData.book_condition}
+            onChange={(e) => setFormData({...formData, book_condition: e.target.value})}
             required
           >
             <option value="New">New</option>
