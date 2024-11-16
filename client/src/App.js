@@ -5,6 +5,7 @@ import Login from './components/Login';
 import Home from './components/Home';
 import Navbar from './components/Navbar';
 import SellBook from './components/SellBook';
+import ContactSeller from './components/ContactSeller';
 import './styles.css';
 
 function App() {
@@ -28,6 +29,10 @@ function App() {
           <Route path="/login" element={!isAuthenticated ? <Login updateAuthStatus={updateAuthStatus} /> : <Navigate to="/" />} />
           <Route path="/" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
           <Route path="/sell" element={isAuthenticated ? <SellBook /> : <Navigate to="/login" />} />
+          <Route 
+            path="/contact-seller/:bookId" 
+            element={isAuthenticated ? <ContactSeller /> : <Navigate to="/login" />} 
+          />
         </Routes>
       </div>
     </Router>

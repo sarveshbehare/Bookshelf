@@ -57,4 +57,24 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.get('/:bookId/seller', async (req, res) => {
+  try {
+    const [sellers] = await db.query(`
+      SELECT users.name, users.roll_number, users.email 
+      FROM users 
+      INNER JOIN books ON users.id = books.seller_id 
+      WHERE books.id = ?
+    `, [req.params.bookId]);
+
+    if (sellers.length === 0) {
+      return res.status(404).json({ msg: 'Seller not found' });
+    }
+
+    res.json(sellers[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
 module.exports = router;
