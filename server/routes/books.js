@@ -57,20 +57,71 @@ router.post('/', async (req, res) => {
   }
 });
 
+
 router.get('/:bookId/seller', async (req, res) => {
   try {
-    const [sellers] = await db.query(`
-      SELECT users.name, users.roll_number, users.email 
-      FROM users 
-      INNER JOIN books ON users.id = books.seller_id 
+    const [result] = await db.query(`
+      SELECT books.*, users.name, users.roll_number, users.email 
+      FROM books 
+      INNER JOIN users ON users.id = books.seller_id 
       WHERE books.id = ?
     `, [req.params.bookId]);
 
-    if (sellers.length === 0) {
-      return res.status(404).json({ msg: 'Seller not found' });
+    if (result.length === 0) {
+      return res.status(404).json({ msg: 'Book not found' });
     }
 
-    res.json(sellers[0]);
+    res.json(result[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+router.get('/user/:userId', async (req, res) => {
+  try {
+    const [books] = await db.query(
+      'SELECT * FROM books WHERE seller_id = ?',
+      [req.params.userId]
+    );
+    res.json(books);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+router.put('/:bookId', async (req, res) => {
+  try {
+    const { title, author, price, book_condition } = req.body;
+    const [result] = await db.query(
+      'UPDATE books SET title = ?, author = ?, price = ?, book_condition = ? WHERE id = ? AND seller_id = ?',
+      [title, author, price, book_condition, req.params.bookId, req.body.seller_id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ msg: 'Book not found or unauthorized' });
+    }
+
+    res.json({ msg: 'Book updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+router.delete('/:bookId', async (req, res) => {
+  try {
+    const [result] = await db.query(
+      'DELETE FROM books WHERE id = ? AND seller_id = ?',
+      [req.params.bookId, req.query.seller_id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ msg: 'Book not found or unauthorized' });
+    }
+
+    res.json({ msg: 'Book deleted successfully' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: 'Server error' });

@@ -20,6 +20,7 @@ function Navbar({ updateAuthStatus }) {
       <div className="nav-links">
         <Link to="/" className="nav-link">Home</Link>
         <Link to="/sell" className="nav-link">Sell Book</Link>
+        <Link to="/my-listings" className="nav-link">My Listings</Link>
         <span className="nav-user">Welcome, {user?.name}</span>
         <button onClick={handleLogout} className="logout-btn">Logout</button>
       </div>

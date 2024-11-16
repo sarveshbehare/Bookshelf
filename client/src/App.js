@@ -6,6 +6,7 @@ import Home from './components/Home';
 import Navbar from './components/Navbar';
 import SellBook from './components/SellBook';
 import ContactSeller from './components/ContactSeller';
+import MyListings from './components/MyListings';
 import './styles.css';
 
 function App() {
@@ -32,6 +33,10 @@ function App() {
           <Route 
             path="/contact-seller/:bookId" 
             element={isAuthenticated ? <ContactSeller /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/my-listings" 
+            element={isAuthenticated ? <MyListings /> : <Navigate to="/login" />} 
           />
         </Routes>
       </div>
