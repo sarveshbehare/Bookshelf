@@ -136,6 +136,9 @@
   }
   
   .book-card h3 {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow:ellipsis;
     margin-bottom: 1rem;
   }
   
